@@ -1,6 +1,13 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
+      get 'todo_items/index'
+      post 'todo_items/create'
+      delete '/destroy/:id', to: 'todo_items#destroy'
+    end
+  end
+  namespace :api do
+    namespace :v1 do
       post '/login', to: 'sessions#create'
       delete '/logout', to: 'sessions#destroy'
       get '/logged_in', to: 'sessions#is_logged_in?'

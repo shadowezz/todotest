@@ -5,3 +5,11 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+5.times do |i|
+    TodoItem.create(
+        title: "Task #{i + 1}",
+        description: "Hello world",
+        category: "Work",
+        user_id: 1
+    )
+end

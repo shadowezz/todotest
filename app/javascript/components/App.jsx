@@ -4,6 +4,7 @@ import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import Home from './Home'
 import Login from './Login'
 import Signup from './Signup'
+import TodoItems from './TodoItems'
 
 class App extends Component {
   constructor(props) {
@@ -61,6 +62,12 @@ render() {
               render={props => (
               <Signup {...props} handleLogin={this.handleLogin} loggedInStatus={this.state.isLoggedIn}/>
               )}
+            />
+            <Route
+                exact path='/todo_items'
+                render={props => (
+                <TodoItems {...props} handleLogout={this.handleLogout}/>
+                )}
             />
           </Switch>
         </BrowserRouter>
