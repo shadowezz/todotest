@@ -20,14 +20,7 @@ class TodoItems extends React.Component {
       .catch(error => console.log("api errors:", error))
   }
 
-  backendLogout() {
-    axios.delete('/api/v1/logout', {withCredentials:true})
-    .then(response => {
-      this.props.handleLogout()
-      this.props.history.push('/')
-    })
-    .catch(error => console.log(error))
-  }
+
 
   render() {
     const allTodos = this.state.todos.map((todo, index) => (
@@ -39,13 +32,21 @@ class TodoItems extends React.Component {
         <td>{todo.created_at}</td>
       </tr>
     ));
+    const backendLogout = () => {
+      axios.delete('/api/v1/logout', {withCredentials:true})
+      .then(response => {
+        this.props.handleLogout()
+        this.props.history.push('/')
+      })
+      .catch(error => console.log(error))
+    }
     return (
       <div>
         <nav>
           <Link to="/logout" onClick={backendLogout}>Logout</Link>
         </nav>
         <div>
-          <h1>Welcome!</h1>
+          <h1>Welcome {this.props.username}</h1>
           <p>Here are your todo items.</p>
         </div>
         <div>

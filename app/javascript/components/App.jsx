@@ -66,7 +66,7 @@ render() {
             <Route
                 exact path='/todo_items'
                 render={props => (
-                <TodoItems {...props} handleLogout={this.handleLogout}/>
+                <TodoItems {...props} handleLogout={this.handleLogout} username={this.state.user.username}/>
                 )}
             />
           </Switch>
