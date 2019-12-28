@@ -12,6 +12,7 @@ class Signup extends Component {
       errors: ''
      };
   }
+  
 handleChange = (event) => {
     const {name, value} = event.target
     this.setState({
@@ -27,18 +28,18 @@ handleSubmit = (event) => {
       password: password,
       password_confirmation: password_confirmation
     }
-axios.post('api/v1/users/create', {user}, {withCredentials: true})
-    .then(response => {
-      if (response.data.status === 'created') {
-        this.props.handleLogin(response.data)
-        this.redirect()
-      } else {
-        this.setState({
-          errors: response.data.errors
-        })
-      }
-    })
-    .catch(error => console.log('api errors:', error))
+    axios.post('api/v1/users/create', {user}, {withCredentials: true})
+      .then(response => {
+        if (response.data.status === 'created') {
+          this.props.handleLogin(response.data)
+          this.redirect()
+        } else {
+          this.setState({
+            errors: response.data.errors
+          })
+        }
+      })
+      .catch(error => console.log('api errors:', error))
   };
 redirect = () => {
     this.props.history.push('/')

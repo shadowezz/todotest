@@ -8,10 +8,13 @@ class Api::V1::TodoItemsController < ApplicationController
   end
 
   def create
-    @todo_item = TodoItem.create!(todo_item_params)
+    @todo_item = TodoItem.new(todo_item_params)
     @todo_item.user = current_user
-    if @todo_item
-      render json: @todo_item
+    if @todo_item.save
+      render json: {
+        status: :created,
+        todo: @todo_item
+      }
     else 
       render json: @todo_item.errors
     end
@@ -25,7 +28,7 @@ class Api::V1::TodoItemsController < ApplicationController
   private
 
   def todo_item_params
-    params.require(:todo_item, :title).permit(:title, :description, :category, :deadline)
+    params.require(:todo).permit(:title, :description, :category, :deadline)
   end
 
   def set_todo_item

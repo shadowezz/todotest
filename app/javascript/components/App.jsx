@@ -5,6 +5,7 @@ import Home from './Home'
 import Login from './Login'
 import Signup from './Signup'
 import TodoItems from './TodoItems'
+import NewTodo from './NewTodo'
 
 class App extends Component {
   constructor(props) {
@@ -28,19 +29,20 @@ class App extends Component {
     })
     .catch(error => console.log('api errors:', error))
   }
-handleLogin = (data) => {
+  handleLogin = (data) => {
     this.setState({
       isLoggedIn: true,
       user: data.user
     })
   }
-handleLogout = () => {
+  handleLogout = () => {
     this.setState({
-    isLoggedIn: false,
-    user: {}
+      isLoggedIn: false,
+      user: {}
     })
   }
-render() {
+
+  render() {
     return (
       <div>
         <BrowserRouter>
@@ -66,7 +68,14 @@ render() {
             <Route
                 exact path='/todo_items'
                 render={props => (
-                <TodoItems {...props} handleLogout={this.handleLogout} username={this.state.user.username}/>
+                <TodoItems {...props} handleLogout={this.handleLogout} username={this.state.user.username} 
+                  loggedInStatus={this.state.isLoggedIn}/>
+                )}
+            />
+            <Route
+                exact path='/todo_items/new'
+                render={props => (
+                <NewTodo {...props} handleLogout={this.handleLogout} loggedInStatus={this.state.isLoggedIn}/>
                 )}
             />
           </Switch>

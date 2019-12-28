@@ -11,16 +11,29 @@ class TodoItems extends React.Component {
     };
   }
 
+
   componentDidMount() {
-    axios.get('/api/v1/todo_items/index')
-      .then(response => {
-        console.log(response.data);
-        this.setState({ todos: response.data });
-      })
-      .catch(error => console.log("api errors:", error))
+    if (!this.props.loggedInStatus) {
+      this.props.history.push('/')
+    }
+    else {
+      axios.get('/api/v1/todo_items/index')
+        .then(response => {
+          console.log(response.data);
+          this.setState({ todos: response.data });
+        })
+        .catch(error => console.log("api errors:", error))
+      }
   }
 
-
+  backendLogout = () => {
+    axios.delete('/api/v1/logout', {withCredentials:true})
+      .then(response => {
+        this.props.handleLogout()
+        this.props.history.push('/')
+      })
+      .catch(error => console.log(error))
+  }
 
   render() {
     const allTodos = this.state.todos.map((todo, index) => (
@@ -32,18 +45,11 @@ class TodoItems extends React.Component {
         <td>{todo.created_at}</td>
       </tr>
     ));
-    const backendLogout = () => {
-      axios.delete('/api/v1/logout', {withCredentials:true})
-      .then(response => {
-        this.props.handleLogout()
-        this.props.history.push('/')
-      })
-      .catch(error => console.log(error))
-    }
+    
     return (
       <div>
         <nav>
-          <Link to="/logout" onClick={backendLogout}>Logout</Link>
+          <Link to="/logout" onClick={this.backendLogout}>Logout</Link>
         </nav>
         <div>
           <h1>Welcome {this.props.username}</h1>
@@ -65,6 +71,7 @@ class TodoItems extends React.Component {
             </tbody>
           </table>
         </div>
+        <Link to="/todo_items/new">Create new Todo!</Link>
       </div>
     )
   }
