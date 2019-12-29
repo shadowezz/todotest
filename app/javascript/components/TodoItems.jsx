@@ -39,7 +39,8 @@ class TodoItems extends React.Component {
     axios.delete(`/api/v1/destroy/${id}`, {withCredentials:true})
       .then(response => {
         console.log(response.data.message)
-        this.props.history.push('/todo_items')
+        const new_todos = this.state.todos.filter((item) => item.id != id)
+        this.setState({ todos: new_todos })
       })
       .catch(error => console.log(error))
   }
@@ -52,7 +53,7 @@ class TodoItems extends React.Component {
         <td>{todo.category}</td>
         <td>{todo.deadline}</td>
         <td>{todo.created_at}</td>
-        <td><button type="button" onClick={this.deleteTodo(todo.id)}>Completed</button></td>
+        <td><button type="button" onClick={() => this.deleteTodo(todo.id)}>Completed</button></td>
       </tr>
     ));
     
