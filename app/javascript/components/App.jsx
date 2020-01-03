@@ -23,6 +23,7 @@ class App extends Component {
     .then(response => {
       if (response.data.logged_in) {
         this.handleLogin(response)
+        
       } else {
         this.handleLogout()
       }
@@ -36,6 +37,12 @@ class App extends Component {
     })
   }
   handleLogout = () => {
+    axios.delete('/api/v1/logout', {withCredentials:true})
+      .then(response => {
+        localStorage.removeItem('logged_in');
+        this.props.history.push('/')
+      })
+      .catch(error => console.log(error))
     this.setState({
       isLoggedIn: false,
       user: {}
@@ -56,27 +63,26 @@ class App extends Component {
             <Route 
               exact path='/login' 
               render={props => (
-              <Login {...props} handleLogin={this.handleLogin} loggedInStatus={this.state.isLoggedIn}/>
+              <Login {...props} handleLogin={this.handleLogin}/>
               )}
             />
             <Route 
               exact path='/signup' 
               render={props => (
-              <Signup {...props} handleLogin={this.handleLogin} loggedInStatus={this.state.isLoggedIn}/>
+              <Signup {...props} handleLogin={this.handleLogin}/>
               )}
             />
             <Route
-                exact path='/todo_items'
-                render={props => (
-                <TodoItems {...props} handleLogout={this.handleLogout} username={this.state.user.username} 
-                  loggedInStatus={this.state.isLoggedIn}/>
-                )}
+              exact path='/todo_items'
+              render={props => (
+              <TodoItems {...props} handleLogout={this.handleLogout}/>
+              )}
             />
             <Route
-                exact path='/todo_items/new'
-                render={props => (
-                <NewTodo {...props} handleLogout={this.handleLogout} loggedInStatus={this.state.isLoggedIn}/>
-                )}
+              exact path='/todo_items/new'
+              render={props => (
+              <NewTodo {...props} handleLogout={this.handleLogout} loggedInStatus={this.state.isLoggedIn}/>
+              )}
             />
           </Switch>
         </BrowserRouter>

@@ -13,7 +13,7 @@ class TodoItems extends React.Component {
 
 
   componentDidMount() {
-    if (!this.props.loggedInStatus) {
+    if (!localStorage.getItem('logged_in')) {
       this.props.history.push('/')
     }
     else {
@@ -24,15 +24,6 @@ class TodoItems extends React.Component {
         })
         .catch(error => console.log("api errors:", error))
       }
-  }
-
-  backendLogout = () => {
-    axios.delete('/api/v1/logout', {withCredentials:true})
-      .then(response => {
-        this.props.handleLogout()
-        this.props.history.push('/')
-      })
-      .catch(error => console.log(error))
   }
 
   deleteTodo = (id) => {
@@ -60,10 +51,10 @@ class TodoItems extends React.Component {
     return (
       <div>
         <nav>
-          <Link to="/logout" onClick={this.backendLogout}>Logout</Link>
+          <Link to="/logout" onClick={this.handleLogout}>Logout</Link>
         </nav>
         <div>
-          <h1>Welcome {this.props.username}</h1>
+          <h1>Welcome {localStorage.getItem("username")}</h1>
           <p>Here are your todo items.</p>
         </div>
         <div>
