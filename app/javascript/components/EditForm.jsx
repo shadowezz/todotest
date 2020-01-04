@@ -76,7 +76,7 @@ class EditForm extends React.Component {
                             onChange={this.handleChange} />
                     <input  name="deadline"
                             type="datetime-local"
-                            value={this.state.deadline.slice(0,16)}
+                            value={this.state.deadline ? this.state.deadline.slice(0, 16) : ""}
                             onChange={this.handleChange} />
                     <button>Update Todo Item</button>
                 </form>
