@@ -1,14 +1,17 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import axios from 'axios'
+import axios from 'axios';
+import EditForm from './EditForm';
 
 class TodoItems extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       todos: [],
-      errors: ''
+      errors: '',
+      update: false
     };
+    this.clearUpdate = this.clearUpdate.bind(this)
   }
 
 
@@ -24,6 +27,16 @@ class TodoItems extends React.Component {
         })
         .catch(error => console.log("api errors:", error))
       }
+  }
+
+  clearUpdate = () => {
+    this.setState({update: false})
+    axios.get('/api/v1/todo_items/index')
+        .then(response => {
+          console.log(response.data);
+          this.setState({ todos: response.data });
+        })
+        .catch(error => console.log("api errors:", error))
   }
 
   deleteTodo = (id) => {
@@ -42,40 +55,48 @@ class TodoItems extends React.Component {
         <td>{todo.title}</td>
         <td>{todo.description}</td>
         <td>{todo.category}</td>
-        <td>{todo.deadline}</td>
-        <td>{todo.created_at}</td>
+        <td>{todo.deadline.slice(0, 16)}</td>
+        <td>{todo.created_at.slice(0, 16)}</td>
+        <td><button type="button" onClick={() => this.setState({update: todo})}>Update</button></td>
         <td><button type="button" onClick={() => this.deleteTodo(todo.id)}>Completed</button></td>
       </tr>
     ));
-    
-    return (
-      <div>
-        <nav>
-          <Link to="/logout" onClick={this.handleLogout}>Logout</Link>
-        </nav>
+    if (!this.state.update) {
+      return (
         <div>
-          <h1>Welcome {localStorage.getItem("username")}</h1>
-          <p>Here are your todo items.</p>
+          <nav>
+            <Link to="/" onClick={this.props.handleLogout}>Logout</Link>
+          </nav>
+          <div>
+            <h1>Welcome {localStorage.getItem("username")}</h1>
+            <p>Here are your todo items.</p>
+          </div>
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Deadline</th>
+                  <th>Created at</th>
+                </tr>
+              </thead>
+              <tbody>
+                { allTodos }
+              </tbody>
+            </table>
+          </div>
+          <Link to="/todo_items/new">Create new Todo!</Link>
         </div>
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Deadline</th>
-                <th>Created at</th>
-              </tr>
-            </thead>
-            <tbody>
-              { allTodos }
-            </tbody>
-          </table>
-        </div>
-        <Link to="/todo_items/new">Create new Todo!</Link>
-      </div>
-    )
+      )
+    }
+
+    else {
+      return (
+        <EditForm todo = {this.state.update} clearUpdate = {this.clearUpdate}/>
+      )
+    }
   }
 
 }

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'todo_items/index'
       post 'todo_items/create'
+      put '/update/:id', to: 'todo_items#update'
       delete '/destroy/:id', to: 'todo_items#destroy'
     end
   end

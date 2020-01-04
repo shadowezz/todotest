@@ -72,7 +72,7 @@ class NewTodo extends React.Component {
     return (
           <div>
             <nav>
-                <Link to="/logout" onClick={this.backendLogout}>Logout</Link>
+                <Link to="/logout" onClick={this.props.handleLogout}>Logout</Link>
             </nav>
             <h1>Create New Todo Item</h1>
             <form onSubmit={this.handleSubmit}>

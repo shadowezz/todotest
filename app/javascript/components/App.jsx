@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios'
-import {BrowserRouter, Switch, Route} from 'react-router-dom'
+import {BrowserRouter, Switch, Route, Redirect, withRouter} from 'react-router-dom'
 import Home from './Home'
 import Login from './Login'
 import Signup from './Signup'
 import TodoItems from './TodoItems'
 import NewTodo from './NewTodo'
+import EditForm from './EditForm'
 
 class App extends Component {
   constructor(props) {
@@ -40,7 +41,7 @@ class App extends Component {
     axios.delete('/api/v1/logout', {withCredentials:true})
       .then(response => {
         localStorage.removeItem('logged_in');
-        this.props.history.push('/')
+        <Redirect to='/' />
       })
       .catch(error => console.log(error))
     this.setState({
@@ -84,6 +85,12 @@ class App extends Component {
               <NewTodo {...props} handleLogout={this.handleLogout} loggedInStatus={this.state.isLoggedIn}/>
               )}
             />
+            {/*<Route
+              exact path='/todo_items/update'
+              render={props => (
+              <EditForm {...props} handleLogout={this.handleLogout}/>
+              )}
+              /> */}
           </Switch>
         </BrowserRouter>
       </div>

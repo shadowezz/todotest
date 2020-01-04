@@ -1,6 +1,6 @@
 class Api::V1::TodoItemsController < ApplicationController
   
-  before_action :set_todo_item, only: [:destroy]
+  before_action :set_todo_item, only: [:destroy, :update]
   
   def index
     @todo_items = TodoItem.where(user: current_user).find_each
@@ -17,6 +17,20 @@ class Api::V1::TodoItemsController < ApplicationController
       }
     else 
       render json: @todo_item.errors
+    end
+  end
+
+  def update
+    if @todo_item.update(todo_item_params)
+      render json: {
+        status: :updated,
+        todo: @todo_items
+      }
+    else
+      render json: {
+        status: :unprocessable_entity,
+        errors: @todo_item.errors
+      }
     end
   end
 
