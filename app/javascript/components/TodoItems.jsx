@@ -78,7 +78,8 @@ class TodoItems extends React.Component {
           <div>
             <h1>Welcome {localStorage.getItem("username")}</h1>
             <p>Here are your todo items.</p>
-            <Search todos={this.state.all_todos} updateDisplay={this.updateDisplay}/>
+            <Search all_todos={this.state.all_todos} displayed_todos={this.state.displayed_todos} 
+              updateDisplay={this.updateDisplay}/>
           </div>
           <div>
             <table>
