@@ -10,6 +10,7 @@ import Popper from 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import App from "../components/App";
 
+
 document.addEventListener("DOMContentLoaded", () => {
   render(
     <App />,

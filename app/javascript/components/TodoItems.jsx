@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import axios from 'axios';
 import EditForm from './EditForm';
 import Search from './Search';
+//import FlashMsg from './FlashMsg'
 
 class TodoItems extends React.Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class TodoItems extends React.Component {
     this.state = {
       all_todos: [],
       displayed_todos: [],
-      errors: '',
+      message: this.props.message,
       update: false
     };
     this.clearUpdate = this.clearUpdate.bind(this)
@@ -41,7 +42,8 @@ class TodoItems extends React.Component {
     axios.get('/api/v1/todo_items/index')
         .then(response => {
           console.log(response.data);
-          this.setState({ all_todos: response.data, displayed_todos: response.data });
+          this.setState({ all_todos: response.data, displayed_todos: response.data, 
+            message: "Todo item updated successfully!" });
         })
         .catch(error => console.log("api errors:", error))
   }
@@ -52,7 +54,8 @@ class TodoItems extends React.Component {
         console.log(response.data.message)
         const new_todos = this.state.all_todos.filter((item) => item.id != id)
         const new_display = this.state.displayed_todos.filter((item) => item.id != id)
-        this.setState({ all_todos: new_todos, displayed_todos: new_display })
+        this.setState({ all_todos: new_todos, displayed_todos: new_display, 
+          message: response.data.message })
       })
       .catch(error => console.log(error))
   }
@@ -78,6 +81,9 @@ class TodoItems extends React.Component {
           <div>
             <h1>Welcome {localStorage.getItem("username")}</h1>
             <p>Here are your todo items.</p>
+            <div>
+              {this.state.message}
+            </div>
             <Search all_todos={this.state.all_todos} displayed_todos={this.state.displayed_todos} 
               updateDisplay={this.updateDisplay}/>
           </div>

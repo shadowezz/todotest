@@ -1,6 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import axios from 'axios'
+import DateTimePicker from 'react-datetime-picker'
 
 class NewTodo extends React.Component {
     constructor(props) {
@@ -9,35 +10,32 @@ class NewTodo extends React.Component {
             title: "",
             description: "",
             category: "",
-            deadline: "",
-            errors: ""
+            deadline: new Date(),
+            errors: []
         }
     ;}
 
     componentDidMount() {
-        if (!this.props.loggedInStatus) {
+        if (!localStorage.getItem('logged_in')) {
           this.props.history.push('/')
         }
     }
-
-    backendLogout = () => {
-        axios.delete('/api/v1/logout', {withCredentials:true})
-          .then(response => {
-            this.props.handleLogout()
-            this.props.history.push('/')
-          })
-          .catch(error => console.log(error))
-    }
+  
 
     handleChange = (event) => {
         const {name, value} = event.target
         this.setState({
           [name]: value
         })
-      };
+      }
+    dateChange = (deadline) => {
+      this.setState({deadline: deadline})
+    }
+
     handleSubmit = (event) => {
         event.preventDefault()
         const {title, description, category, deadline} = this.state
+
         let todo = {
           title: title,
           description: description,
@@ -47,10 +45,13 @@ class NewTodo extends React.Component {
         axios.post('/api/v1/todo_items/create', {todo}, {withCredentials: true})
             .then(response => {
             if (response.data.status === 'created') {
+                this.props.setMessage("New Todo created!")
                 this.props.history.push('/todo_items')
+
+                
             } else {
                 this.setState({
-                errors: response.data.errors
+                  errors: response.data.errors
                 })
             }
             })
@@ -61,7 +62,7 @@ class NewTodo extends React.Component {
         return (
           <div>
             <ul>{this.state.errors.map((error) => {
-              return <li>key={error}>{error}</li>
+              return <li key={error}>{error}</li>
             })}
             </ul> 
           </div>
@@ -72,9 +73,14 @@ class NewTodo extends React.Component {
     return (
           <div>
             <nav>
-                <Link to="/" onClick={this.props.handleLogout}>Logout</Link>
+                <Link to="/" onClick={() => this.props.handleLogout}>Logout</Link>
             </nav>
             <h1>Create New Todo Item</h1>
+            <div>
+              {
+                this.state.errors[1]
+              }
+            </div>
             <form onSubmit={this.handleSubmit}>
               <input
                 placeholder="Title"
@@ -103,17 +109,15 @@ class NewTodo extends React.Component {
                 value={deadline}
                 onChange={this.handleChange}
               />
+              {/*<DateTimePicker onChange={this.dateChange} value={deadline} name="deadline"
+                disableClock={true} minDate={new Date()}/>*/}
             
               <button placeholder="submit" type="submit">
                 Create
               </button>
           
             </form>
-            <div>
-              {
-                this.state.errors ? this.handleErrors() : null
-              }
-            </div>
+            <Link to="/todo_items">Back</Link>
           </div>
         );
       }

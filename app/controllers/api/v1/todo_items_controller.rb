@@ -16,7 +16,9 @@ class Api::V1::TodoItemsController < ApplicationController
         todo: @todo_item
       }
     else 
-      render json: @todo_item.errors
+      render json: {
+        errors: @todo_item.errors.full_messages
+      }
     end
   end
 

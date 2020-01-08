@@ -6,14 +6,15 @@ import Login from './Login'
 import Signup from './Signup'
 import TodoItems from './TodoItems'
 import NewTodo from './NewTodo'
-import EditForm from './EditForm'
+
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = { 
       isLoggedIn: false,
-      user: {}
+      user: {},
+      message: ''
      };
   }
   componentDidMount() {
@@ -50,6 +51,10 @@ class App extends Component {
     })
   }
 
+  setMessage = (message) => {
+    this.setState({message: message})
+  }
+
   render() {
     return (
       <div>
@@ -76,21 +81,15 @@ class App extends Component {
             <Route
               exact path='/todo_items'
               render={props => (
-              <TodoItems {...props} handleLogout={this.handleLogout}/>
+              <TodoItems {...props} handleLogout={this.handleLogout} message={this.state.message}/>
               )}
             />
             <Route
               exact path='/todo_items/new'
               render={props => (
-              <NewTodo {...props} handleLogout={this.handleLogout} loggedInStatus={this.state.isLoggedIn}/>
+              <NewTodo {...props} handleLogout={this.handleLogout} setMessage={this.setMessage}/>
               )}
             />
-            {/*<Route
-              exact path='/todo_items/update'
-              render={props => (
-              <EditForm {...props} handleLogout={this.handleLogout}/>
-              )}
-              /> */}
           </Switch>
         </BrowserRouter>
       </div>

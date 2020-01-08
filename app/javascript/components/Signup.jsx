@@ -48,7 +48,7 @@ handleErrors = () => {
     return (
       <div>
         <ul>{this.state.errors.map((error) => {
-          return <li>key={error}>{error}</li>
+          return <li key={error}>{error}</li>
         })}
         </ul> 
       </div>
@@ -59,6 +59,11 @@ render() {
 return (
       <div>
         <h1>Sign Up</h1>
+        <div>
+          {
+            this.state.errors ? this.handleErrors() : null
+          }
+        </div>        
        <form onSubmit={this.handleSubmit}>
           <input
             placeholder="username"
@@ -94,11 +99,6 @@ return (
           </button>
       
         </form>
-        <div>
-          {
-            this.state.errors ? this.handleErrors() : null
-          }
-        </div>
       </div>
     );
   }

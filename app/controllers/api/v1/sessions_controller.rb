@@ -11,7 +11,7 @@ class Api::V1::SessionsController < ApplicationController
     else
       render json: { 
         status: 401,
-        errors: ['no such user', 'verify credentials and try again or signup']
+        errors: 'Incorrect email or password. Please try again or sign up for a new account'
       }
     end
   end

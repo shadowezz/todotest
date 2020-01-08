@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import axios from 'axios'
 import {Link} from 'react-router-dom'
+//import FlashMsg from './FlashMsg'
+
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      username: '',
       email: '',
       password: '',
       errors: ''
@@ -20,9 +21,8 @@ handleChange = (event) => {
   };
 handleSubmit = (event) => {
     event.preventDefault()
-    const {username, email, password} = this.state
+    const {email, password} = this.state
 let user = {
-      username: username,
       email: email,
       password: password
     }
@@ -35,7 +35,9 @@ axios.post('api/v1/login', {user}, {withCredentials: true})
         this.redirect()
       } else {
         this.setState({
-          errors: response.data.errors
+          errors: response.data.errors,
+          email: '',
+          password: ''
         })
       }
     })
@@ -44,30 +46,22 @@ axios.post('api/v1/login', {user}, {withCredentials: true})
 redirect = () => {
     this.props.history.push('/todo_items')
   }
-handleErrors = () => {
-    return (
-      <div>
-        <ul>
-        {this.state.errors.map(error => {
-        return <li key={error}>{error}</li>
-          })}
-        </ul>
-      </div>
-    )
-  }
+// handleErrors = () => {
+//     return (
+//       <div>
+//         {this.state.errors}
+//       </div>
+//     )
+//   }
 render() {
     const {username, email, password} = this.state
 return (
       <div>
         <h1>Log In</h1>
+        <div>
+          {this.state.errors}
+        </div>
         <form onSubmit={this.handleSubmit}>
-          <input
-            placeholder="username"
-            type="text"
-            name="username"
-            value={username}
-            onChange={this.handleChange}
-          />
           <input
             placeholder="email"
             type="text"
@@ -90,11 +84,7 @@ return (
           </div>
           
         </form>
-        <div>
-          {
-            this.state.errors ? this.handleErrors() : null
-          }
-        </div>
+
       </div>
     );
   }
