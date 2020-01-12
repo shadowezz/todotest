@@ -15,7 +15,8 @@ class TodoItems extends React.Component {
       displayed_todos: [],
       hasMessage: false,
       message: this.props.message,
-      update: false
+      update: false,
+      deleting: false
     };
     this.updateTodo = this.updateTodo.bind(this)
     this.cancelUpdate = this.cancelUpdate.bind(this)
@@ -60,6 +61,18 @@ class TodoItems extends React.Component {
     this.setState({update: false, hasMessage: false})
   }
 
+  openModalHandler(todo) {
+    this.setState({
+        showModal: todo
+    });
+  }
+
+  closeModalHandler() {
+    this.setState({
+        showModal: false
+    });
+  }
+
   deleteTodo = (id) => {
     axios.delete(`/api/v1/destroy/${id}`, {withCredentials:true})
       .then(response => {
@@ -67,7 +80,7 @@ class TodoItems extends React.Component {
         const new_todos = this.state.all_todos.filter((item) => item.id != id)
         const new_display = this.state.displayed_todos.filter((item) => item.id != id)
         this.setState({ all_todos: new_todos, displayed_todos: new_display, 
-          message: response.data.message, hasMessage: true})
+          message: response.data.message, hasMessage: true, deleting: false})
       })
       .catch(error => console.log(error))
   }
@@ -86,15 +99,36 @@ class TodoItems extends React.Component {
             <FontAwesomeIcon icon={faPencilAlt}/> Update
           </button>
         </td>
-        <td><button className="btn btn-warning" type="button" onClick={() => this.deleteTodo(todo.id)}>
+        <td><button className="btn btn-warning" type="button" data-toggle="modal" data-target="#myModal" 
+          onClick={() => this.setState({deleting: todo})}>
           <FontAwesomeIcon icon={faCheckCircle}/>Completed</button></td>
       </tr>
     ));
     if (!this.state.update) {
       return (
         <div className="container-fluid">
-          <NavBar handleLogout={this.props.handleLogout}/>
-          <div>
+          <NavBar handleLogout={this.props.handleLogout}/>         
+          <div className="modal fade" id="myModal" tabIndex="-1" role="dialog">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Delete Todo Item</h5>
+                  <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  Are you sure you want to delete this todo item "{this.state.deleting.title}"?
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" className="btn btn-primary" data-dismiss="modal"
+                    onClick={() => this.deleteTodo(this.state.deleting.id)}>Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div>
             <h1>Welcome {localStorage.getItem("username")}</h1>
             <h3>Here are your todo items.</h3>
             {this.state.hasMessage && <div role="alert" className="alert alert-success"> 
