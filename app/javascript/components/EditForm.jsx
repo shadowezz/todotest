@@ -1,7 +1,8 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import axios from 'axios'
-import { Redirect } from 'react-router-dom'
+import DateTimePicker from 'react-datetime-picker'
+import NavBar from './NavBar'
 
 
 class EditForm extends React.Component {
@@ -30,13 +31,17 @@ class EditForm extends React.Component {
             .then(response => {
                 console.log(response.data.status)
             })
-            .then(this.props.clearUpdate)
+            .then(this.props.updateTodo)
             .catch(error => console.log(error))
         
     }
 
     handleChange = (event) => {
         this.setState({[event.target.name]: event.target.value})
+    }
+
+    dateChange = (deadline) => {
+        this.setState({deadline: deadline})
     }
 
     handleSubmit = (event) => {
@@ -56,30 +61,52 @@ class EditForm extends React.Component {
 
     render() {
         return(
-            <div>
-                <nav>
-                    <Link to="/" onClick={this.props.handleLogout}>Logout</Link>
-                </nav>
-                <h1>Update Todo Item</h1>
-                <form onSubmit={this.handleSubmit}>
-                    <input  name="title"
-                            type="text"
-                            value={this.state.title}
-                            onChange={this.handleChange} />
-                    <input  name="description"
-                            type="text"
-                            value={this.state.description}
-                            onChange={this.handleChange} />
-                    <input  name="category"
-                            type="text"
-                            value={this.state.category}
-                            onChange={this.handleChange} />
-                    <input  name="deadline"
-                            type="datetime-local"
-                            value={this.state.deadline ? this.state.deadline.slice(0, 16) : ""}
-                            onChange={this.handleChange} />
-                    <button>Update Todo Item</button>
-                </form>
+            <div className="container-fluid">
+                <NavBar handleLogout={this.props.handleLogout}/>
+                <div className="row justify-content-center align-items-center h-100">
+                    <div className="col-3 row-6 border border-dark rounded-lg">
+                        <h3>Update Todo Item</h3>
+                        <form role="form" onSubmit={this.handleSubmit}>
+                            <div className="form-group">
+                                <label>Title</label>
+                                <input  className="form-control"
+                                        name="title"
+                                        type="text"
+                                        value={this.state.title}
+                                        onChange={this.handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>Description</label>
+                                <textarea  className="form-control"
+                                        name="description"
+                                        type="text"
+                                        value={this.state.description}
+                                        onChange={this.handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>Category</label>
+                                <input  className="form-control"
+                                        name="category"
+                                        type="text"
+                                        value={this.state.category}
+                                        onChange={this.handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>Deadline</label>
+                                <br></br>
+                                <DateTimePicker onChange={this.dateChange} value={new Date(this.state.deadline)} 
+                                    name="deadline" disableClock={true} minDate={new Date()}/>
+                            </div>
+                            <button className="btn btn-success" placeholder="submit" type="submit">
+                                Update
+                            </button>
+                            <button onClick={this.props.cancelUpdate} 
+                                className="btn btn-secondary">
+                                    Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>  
         )
     }

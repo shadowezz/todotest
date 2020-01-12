@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios'
+import {Link} from "react-router-dom";
 
 class Signup extends Component {
   constructor(props) {
@@ -9,7 +10,8 @@ class Signup extends Component {
       email: '',
       password: '',
       password_confirmation: '',
-      errors: ''
+      errors: '',
+      hasErrors: false
      };
   }
   
@@ -35,7 +37,8 @@ handleSubmit = (event) => {
           this.redirect()
         } else {
           this.setState({
-            errors: response.data.errors
+            errors: response.data.errors,
+            hasErrors: true
           })
         }
       })
@@ -47,7 +50,7 @@ redirect = () => {
 handleErrors = () => {
     return (
       <div>
-        <ul>{this.state.errors.map((error) => {
+        <ul className="list-unstyled">{this.state.errors.map((error) => {
           return <li key={error}>{error}</li>
         })}
         </ul> 
@@ -57,48 +60,66 @@ handleErrors = () => {
 render() {
     const {username, email, password, password_confirmation} = this.state
 return (
-      <div>
-        <h1>Sign Up</h1>
-        <div>
-          {
-            this.state.errors ? this.handleErrors() : null
-          }
-        </div>        
-       <form onSubmit={this.handleSubmit}>
-          <input
-            placeholder="username"
-            type="text"
-            name="username"
-            value={username}
-            onChange={this.handleChange}
-          />
-          <input
-            placeholder="email"
-            type="text"
-            name="email"
-            value={email}
-            onChange={this.handleChange}
-          />
-          <input 
-            placeholder="password"
-            type="password"
-            name="password"
-            value={password}
-            onChange={this.handleChange}
-          />
-          <input
-            placeholder="password confirmation"
-            type="password"
-            name="password_confirmation"
-            value={password_confirmation}
-            onChange={this.handleChange}
-          />
-        
-          <button placeholder="submit" type="submit">
-            Sign Up
-          </button>
-      
-        </form>
+        <div className="container-fluid">
+          <div className="row justify-content-center align-items-center h-100">
+            <div className="col-3 row-6 border border-dark rounded-lg">
+            <h3>Sign Up</h3>
+            {this.state.hasErrors && <div role="alert" className="alert alert-danger">
+              {this.handleErrors()}
+            </div>}        
+            <form role="form" onSubmit={this.handleSubmit}>
+              <div className="form-group">
+                <label>Username</label>
+                <input
+                  className="form-control"
+                  placeholder="Enter username"
+                  type="text"
+                  name="username"
+                  value={username}
+                  onChange={this.handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label>Email address</label>
+                <input
+                  className="form-control"
+                  placeholder="Enter email"
+                  type="text"
+                  name="email"
+                  value={email}
+                  onChange={this.handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label>Password</label>
+                <input 
+                  className="form-control"
+                  placeholder="Enter password"
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={this.handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label>Password Confirmation</label>
+                <input
+                  className="form-control"
+                  placeholder="Confirm Password"
+                  type="password"
+                  name="password_confirmation"
+                  value={password_confirmation}
+                  onChange={this.handleChange}
+                />
+              </div>
+            
+              <button className="btn btn-success" placeholder="submit" type="submit">
+                Sign Up
+              </button>        
+            </form>
+            <Link to="/login">Already have an account?</Link>
+          </div>
+        </div>
       </div>
     );
   }

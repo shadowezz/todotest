@@ -1,4 +1,6 @@
 import React from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 class Search extends React.Component {
     constructor(props) {
@@ -66,16 +68,29 @@ class Search extends React.Component {
     render() {
         return (
             <div>
-                <input type="text" onChange={this.handleSearch} placeholder={"Search by " + this.state.searchBy}/>
+                <div className="input-group mb-3">
+                    <div className="input-group-prepend">
+                        <FontAwesomeIcon icon={faSearch} size="lg" transform="down-7 left-3"/>
+                        <select className="custom-select" defaultValue="title" onChange={this.changeSearch}>
+                            <option value="title">Title</option>
+                            <option value="category">Category</option>
+                        </select>
+                    </div>
+                    <input className="form-control" type="text" onChange={this.handleSearch} 
+                        placeholder={"Search by " + this.state.searchBy}/>
+                    
+                </div>
+
+    
+                {/*<input type="text" onChange={this.handleSearch} placeholder={"Search by " + this.state.searchBy}/>
                 <input type="radio" name="search" value="title" onClick={this.changeSearch} 
                     defaultChecked/> Title
-                <input type="radio" name="search" value="category" onClick={this.changeSearch}/> Cateogry <br></br>
-                Sort By
-                <select name="sort" defaultValue="deadline" onChange={this.handleSort}>
+        <input type="radio" name="search" value="category" onClick={this.changeSearch}/> Cateogry <br></br>*/}
+                Sort By:
+                <select className="custom-select narrow" defaultValue="deadline" onChange={this.handleSort}>
                     <option value="title">Alphabetical</option>
                     <option value="created_at">Created date</option>
-                    <option value="deadline">Deadline</option>
-                    
+                    <option value="deadline">Deadline</option>    
                 </select>
             </div>
         )

@@ -3,20 +3,22 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
     return (
-        <div>
+        <div className="container-fluid text-center">
             <h1>Todo List Manager</h1>
-            <p>Your number one site to get your shit together.</p>
-            <Link 
-                to="/signup"
-            >
-                Sign up
-            </Link>
+            <h3>Your number one site to get your shit together.</h3>
             <br></br>
-            <Link
-                to="/login"
-            >
-                Log in
-            </Link>
+            <button className="btn btn-success btn-home">
+                <Link to="/signup">
+                    Sign up
+                </Link>
+            </button>
+            <br></br>
+            <br></br>
+            <button className="btn btn-success btn-home">
+                <Link to="/login">
+                    Log in
+                </Link>
+            </button>
         </div>
     );
 };

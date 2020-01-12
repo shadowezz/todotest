@@ -3,7 +3,9 @@ import {Link} from "react-router-dom";
 import axios from 'axios';
 import EditForm from './EditForm';
 import Search from './Search';
-//import FlashMsg from './FlashMsg'
+import NavBar from './NavBar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCheckCircle, faPencilAlt, faSearch, faPlusSquare} from '@fortawesome/free-solid-svg-icons'
 
 class TodoItems extends React.Component {
   constructor(props) {
@@ -11,10 +13,12 @@ class TodoItems extends React.Component {
     this.state = {
       all_todos: [],
       displayed_todos: [],
+      hasMessage: false,
       message: this.props.message,
       update: false
     };
-    this.clearUpdate = this.clearUpdate.bind(this)
+    this.updateTodo = this.updateTodo.bind(this)
+    this.cancelUpdate = this.cancelUpdate.bind(this)
     this.updateDisplay = this.updateDisplay.bind(this)
   }
 
@@ -37,15 +41,23 @@ class TodoItems extends React.Component {
     this.setState({displayed_todos: newList})
   }
 
-  clearUpdate = () => {
+  createTodo = () => {
+    this.setState({hasMessage: true, message: "New Todo created!"})
+  }
+
+  updateTodo = () => {
     this.setState({update: false})
     axios.get('/api/v1/todo_items/index')
         .then(response => {
           console.log(response.data);
           this.setState({ all_todos: response.data, displayed_todos: response.data, 
-            message: "Todo item updated successfully!" });
+            message: "Todo item updated successfully!", hasMessage: true });
         })
         .catch(error => console.log("api errors:", error))
+  }
+
+  cancelUpdate() {
+    this.setState({update: false, hasMessage: false})
   }
 
   deleteTodo = (id) => {
@@ -55,7 +67,7 @@ class TodoItems extends React.Component {
         const new_todos = this.state.all_todos.filter((item) => item.id != id)
         const new_display = this.state.displayed_todos.filter((item) => item.id != id)
         this.setState({ all_todos: new_todos, displayed_todos: new_display, 
-          message: response.data.message })
+          message: response.data.message, hasMessage: true})
       })
       .catch(error => console.log(error))
   }
@@ -63,39 +75,45 @@ class TodoItems extends React.Component {
   render() {
     const allTodos = this.state.displayed_todos.map((todo, index) => (
       <tr key={index}>
+        <th>{index + 1}</th>
         <td>{todo.title}</td>
         <td>{todo.description}</td>
         <td>{todo.category}</td>
         <td>{todo.deadline ? todo.deadline.slice(0, 16) : ""}</td>
         <td>{todo.created_at.slice(0, 16)}</td>
-        <td><button type="button" onClick={() => this.setState({update: todo})}>Update</button></td>
-        <td><button type="button" onClick={() => this.deleteTodo(todo.id)}>Completed</button></td>
+        <td>
+          <button className="btn btn-info" type="button" onClick={() => this.setState({update: todo})}>
+            <FontAwesomeIcon icon={faPencilAlt}/> Update
+          </button>
+        </td>
+        <td><button className="btn btn-warning" type="button" onClick={() => this.deleteTodo(todo.id)}>
+          <FontAwesomeIcon icon={faCheckCircle}/>Completed</button></td>
       </tr>
     ));
     if (!this.state.update) {
       return (
-        <div>
-          <nav>
-            <Link to="/" onClick={this.props.handleLogout}>Logout</Link>
-          </nav>
+        <div className="container-fluid">
+          <NavBar handleLogout={this.props.handleLogout}/>
           <div>
             <h1>Welcome {localStorage.getItem("username")}</h1>
-            <p>Here are your todo items.</p>
-            <div>
+            <h3>Here are your todo items.</h3>
+            {this.state.hasMessage && <div role="alert" className="alert alert-success"> 
               {this.state.message}
-            </div>
+            </div>}
             <Search all_todos={this.state.all_todos} displayed_todos={this.state.displayed_todos} 
               updateDisplay={this.updateDisplay}/>
           </div>
           <div>
-            <table>
-              <thead>
+            <table className="table table-striped">
+              <thead className="thead-dark">
                 <tr>
-                  <th>Title</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Deadline</th>
-                  <th>Created at</th>
+                  <th scope="col">#</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Deadline</th>
+                  <th scope="col">Created at</th>
+                  <th scope="col" colSpan="2">Options</th>
                 </tr>
               </thead>
               <tbody>
@@ -103,14 +121,17 @@ class TodoItems extends React.Component {
               </tbody>
             </table>
           </div>
-          <Link to="/todo_items/new">Create new Todo!</Link>
+          <Link className="btn btn-success btn-lg btn-block" role="button" to="/todo_items/new">
+            <FontAwesomeIcon icon={faPlusSquare}/>Create New Todo!
+          </Link>
         </div>
       )
     }
 
     else {
       return (
-        <EditForm todo = {this.state.update} clearUpdate = {this.clearUpdate}/>
+        <EditForm todo = {this.state.update} updateTodo = {this.updateTodo} 
+          cancelUpdate = {this.cancelUpdate}/>
       )
     }
   }

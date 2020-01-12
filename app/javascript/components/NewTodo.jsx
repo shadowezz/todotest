@@ -2,6 +2,7 @@ import React from "react";
 import {Link} from "react-router-dom";
 import axios from 'axios'
 import DateTimePicker from 'react-datetime-picker'
+import NavBar from './NavBar'
 
 class NewTodo extends React.Component {
     constructor(props) {
@@ -11,7 +12,8 @@ class NewTodo extends React.Component {
             description: "",
             category: "",
             deadline: new Date(),
-            errors: []
+            errors: [],
+            hasErrors: false
         }
     ;}
 
@@ -51,7 +53,8 @@ class NewTodo extends React.Component {
                 
             } else {
                 this.setState({
-                  errors: response.data.errors
+                  errors: response.data.errors,
+                  hasErrors: true
                 })
             }
             })
@@ -62,7 +65,7 @@ class NewTodo extends React.Component {
         return (
           <div>
             <ul>{this.state.errors.map((error) => {
-              return <li key={error}>{error}</li>
+              return <li className="list-unstyled" key={error}>{error}</li>
             })}
             </ul> 
           </div>
@@ -71,53 +74,66 @@ class NewTodo extends React.Component {
     render() {
         const {title, description, category, deadline} = this.state
     return (
-          <div>
-            <nav>
-                <Link to="/" onClick={() => this.props.handleLogout}>Logout</Link>
-            </nav>
-            <h1>Create New Todo Item</h1>
-            <div>
-              {
-                this.state.errors[1]
-              }
+          <div className="container-fluid">
+            <NavBar handleLogout={this.props.handleLogout}/>
+            <div className="row justify-content-center align-items-center h-100">
+              <div className="col-3 row-6 border border-dark rounded-lg">
+                <h3>Create New Todo Item</h3>
+                {this.state.hasErrors && <div role="alert" className="alert alert-danger"> 
+                  {this.state.errors}
+                </div>}
+                <form role="form" onSubmit={this.handleSubmit}>
+                  <div className="form-group">
+                    <label>Title</label>
+                    <input
+                      className="form-control"
+                      placeholder="Enter Title"
+                      type="text"
+                      name="title"
+                      value={title}
+                      required
+                      onChange={this.handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                      className="form-control"
+                      placeholder="Enter Description"
+                      type="text"
+                      name="description"
+                      value={description}
+                      onChange={this.handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Category</label>
+                    <input
+                      className="form-control"
+                      placeholder="Enter Category"
+                      type="text"
+                      name="category"
+                      value={category}
+                      onChange={this.handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Deadline</label>
+                    <br></br>
+                    <DateTimePicker onChange={this.dateChange} value={deadline} name="deadline"
+                    disableClock={true} minDate={new Date()} required/>
+                  </div>
+
+                
+                  <button className="btn btn-success" placeholder="submit" type="submit">
+                    Create
+                  </button>
+
+                  <Link className="btn btn-secondary" role="button" to="/todo_items">Cancel</Link>
+                  
+                </form>
+              </div>
             </div>
-            <form onSubmit={this.handleSubmit}>
-              <input
-                placeholder="Title"
-                type="text"
-                name="title"
-                value={title}
-                onChange={this.handleChange}
-              />
-              <input
-                placeholder="Description"
-                type="textarea"
-                name="description"
-                value={description}
-                onChange={this.handleChange}
-              />
-              <input 
-                placeholder="Category"
-                type="text"
-                name="category"
-                value={category}
-                onChange={this.handleChange}
-              />
-              <input
-                type="datetime-local"
-                name="deadline"
-                value={deadline}
-                onChange={this.handleChange}
-              />
-              {/*<DateTimePicker onChange={this.dateChange} value={deadline} name="deadline"
-                disableClock={true} minDate={new Date()}/>*/}
-            
-              <button placeholder="submit" type="submit">
-                Create
-              </button>
-          
-            </form>
-            <Link to="/todo_items">Back</Link>
           </div>
         );
       }

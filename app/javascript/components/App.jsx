@@ -41,7 +41,7 @@ class App extends Component {
   handleLogout = () => {
     axios.delete('/api/v1/logout', {withCredentials:true})
       .then(response => {
-        localStorage.removeItem('logged_in');
+        localStorage.clear();
         <Redirect to='/' />
       })
       .catch(error => console.log(error))
