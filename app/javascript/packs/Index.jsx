@@ -6,10 +6,10 @@ import React from 'react'
 import { render } from "react-dom";
 import 'bootstrap'
 import 'stylesheets/application'
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from 'jquery';
 import Popper from 'popper.js';
-import '../../node_modules/bootstrap/dist/js/bootstrap.bundle.min';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 import App from "../components/App";
 
 
