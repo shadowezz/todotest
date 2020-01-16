@@ -5,7 +5,7 @@ import EditForm from './EditForm';
 import Search from './Search';
 import NavBar from './NavBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle, faPencilAlt, faSearch, faPlusSquare} from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle, faPencilAlt, faSearch, faPlusSquare, faTrash} from '@fortawesome/free-solid-svg-icons'
 
 class TodoItems extends React.Component {
   constructor(props) {
@@ -16,7 +16,8 @@ class TodoItems extends React.Component {
       hasMessage: false,
       message: this.props.message,
       update: false,
-      deleting: false
+      deleting: false,
+      completing: false
     };
     this.updateTodo = this.updateTodo.bind(this)
     this.cancelUpdate = this.cancelUpdate.bind(this)
@@ -85,6 +86,21 @@ class TodoItems extends React.Component {
       .catch(error => console.log(error))
   }
 
+  completeTodo(id) {
+    let todo = {status: "completed"}
+    axios.put(`api/v1/update/${id}`, {todo}, {withCredentials: true})
+      .then(response => {
+        console.log(response.data.status)
+      })
+    .then(this.setState({
+      displayed_todos: this.state.displayed_todos.filter((item) => item.id != id),
+      message: "Todo item moved to Completed",
+      hasMessage: true,
+      completing: false
+    }))
+    .catch(error => console.log(error))
+  }
+
   render() {
     const allTodos = this.state.displayed_todos.map((todo, index) => (
       <tr key={index}>
@@ -99,16 +115,45 @@ class TodoItems extends React.Component {
             <FontAwesomeIcon icon={faPencilAlt}/> Update
           </button>
         </td>
-        <td><button className="btn btn-warning" type="button" data-toggle="modal" data-target="#myModal" 
+        <td><button className="btn btn-warning" type="button" data-toggle="modal" data-target="#completeModal" 
+          onClick={() => this.setState({completing: todo})}>
+          <FontAwesomeIcon icon={faCheckCircle}/>Completed</button>
+        </td>
+        <td><button className="btn btn-danger" type="button" data-toggle="modal" data-target="#deleteModal" 
           onClick={() => this.setState({deleting: todo})}>
-          <FontAwesomeIcon icon={faCheckCircle}/>Completed</button></td>
+          <FontAwesomeIcon icon={faTrash}/>Delete</button>
+        </td>
+
       </tr>
     ));
     if (!this.state.update) {
       return (
         <div className="container-fluid">
-          <NavBar handleLogout={this.props.handleLogout}/>         
-          <div className="modal fade" id="myModal" tabIndex="-1" role="dialog">
+          <NavBar handleLogout={this.props.handleLogout}/>
+
+          <div className="modal fade" id="completeModal" tabIndex="-1" role="dialog">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Complete Todo Item</h5>
+                  <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  Are you sure you want to complete this todo item "{this.state.completing.title}"?
+                  This will be moved to the completed section.
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" className="btn btn-primary" data-dismiss="modal"
+                    onClick={() => this.completeTodo(this.state.completing.id)}>Complete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="modal fade" id="deleteModal" tabIndex="-1" role="dialog">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
                 <div className="modal-header">
@@ -128,6 +173,7 @@ class TodoItems extends React.Component {
               </div>
             </div>
           </div>
+        
         <div>
             <h1>Welcome {localStorage.getItem("username")}</h1>
             <h3>Here are your todo items.</h3>
@@ -147,7 +193,7 @@ class TodoItems extends React.Component {
                   <th scope="col">Category</th>
                   <th scope="col">Deadline</th>
                   <th scope="col">Created at</th>
-                  <th scope="col" colSpan="2">Options</th>
+                  <th scope="col" colSpan="3">Options</th>
                 </tr>
               </thead>
               <tbody>
